@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDGs 性別平權</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background: url('1.jpg') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    #score {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .temple {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 80px);
+      overflow: hidden;
+    }
+    .icon {
+      position: absolute;
+      width: 90px;
+      cursor: pointer;
+      transition: transform 0.3s, filter 0.3s;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+    }
+    .icon:hover {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 10px gold);
+    }
+    .question-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      color: #000;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.8);
+      display: none;
+      width: 320px;
+      text-align: center;
+    }
+    .question-box h2 {
+      font-size: 18px;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .result-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      color: #000;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+      box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #ffd700;
+      color: #000;
+      font-weight: bold;
+      margin: 10px;
+    }
+    button:hover {
+      background-color: #ffec8b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SDGs 性別平權</h1>
+    <div id="score">答對：0 / 10</div>
+  </header>
+  <div class="temple" id="temple"></div>
+
+  <div class="question-box" id="questionBox">
+    <h2 id="questionText"></h2>
+    <div id="options"></div>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <h2 id="resultMessage"></h2>
+    <button id="retryBtn">重新挑戰</button>
+    <button id="nextBtn">前往下一關</button>
+  </div>
+
+  <script>
+    const questions = [
+      { q: '男女應享有同等的受教育權利嗎？', options: ['是', '否', '視情況', '不確定'], answer: 0 },
+      { q: '性別平權的目的是什麼？', options: ['促進男性優勢', '消除性別歧視', '讓女性主導社會', '強調傳統角色'], answer: 1 },
+      { q: '職場上不應以性別作為升遷的標準。', options: ['正確', '錯誤', '不一定', '看公司'], answer: 0 },
+      { q: '何者屬於性別刻板印象？', options: ['女生應該會做家事', '男女都能成為領導者', '人人平等', '尊重多元性別'], answer: 0 },
+      { q: 'SDG 第 5 項目標是？', options: ['消除貧窮', '性別平權', '氣候行動', '優質教育'], answer: 1 },
+      { q: '男生也可以成為幼教老師。', options: ['可以', '不行', '視情況', '社會不接受'], answer: 0 },
+      { q: '在家庭中，誰應該照顧小孩？', options: ['媽媽', '爸爸', '雙方共同', '外人'], answer: 2 },
+      { q: '性別平權是否與人權有關？', options: ['有關', '無關', '不一定', '只與文化有關'], answer: 0 },
+      { q: '學校應鼓勵多元性別教育。', options: ['同意', '反對', '不確定', '沒意見'], answer: 0 },
+      { q: '當看到性別歧視時應？', options: ['沉默', '加入', '勇於制止', '忽視'], answer: 2 }
+    ];
+
+    const temple = document.getElementById('temple');
+    const questionBox = document.getElementById('questionBox');
+    const questionText = document.getElementById('questionText');
+    const optionsDiv = document.getElementById('options');
+    const resultBox = document.getElementById('resultBox');
+    const resultMessage = document.getElementById('resultMessage');
+    const retryBtn = document.getElementById('retryBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const scoreDisplay = document.getElementById('score');
+
+    let score = 0;
+    let current = 0;
+
+    // 建立神殿 icon
+    for (let i = 0; i < 10; i++) {
+      const icon = document.createElement('img');
+      icon.src = 'https://cdn-icons-png.flaticon.com/512/5803/5803121.png'; // temple icon
+      icon.className = 'icon';
+      icon.style.left = `${Math.random() * 80 + 10}%`;
+      icon.style.top = `${Math.random() * 60 + 30}%`;
+      icon.onclick = () => showQuestion(i);
+      temple.appendChild(icon);
+    }
+
+    function showQuestion(index) {
+      if (questions[index].answered) return;
+      current = index;
+      questionText.textContent = questions[index].q;
+      optionsDiv.innerHTML = '';
+      questions[index].options.forEach((opt, i) => {
+        const btn = document.createElement('div');
+        btn.textContent = opt;
+        btn.className = 'option';
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+      questionBox.style.display = 'block';
+    }
+
+    function checkAnswer(i) {
+      if (i === questions[current].answer) score++;
+      questions[current].answered = true;
+      scoreDisplay.textContent = `答對：${score} / 10`;
+      questionBox.style.display = 'none';
+
+      if (questions.every(q => q.answered)) endGame();
+    }
+
+    function endGame() {
+      resultBox.style.display = 'block';
+      if (score >= 8) {
+        resultMessage.textContent = `恭喜過關！你答對了 ${score} 題！`;
+        nextBtn.style.display = 'inline-block';
+        retryBtn.style.display = 'none';
+      } else {
+        resultMessage.textContent = `答對 ${score} 題，未達 8 題，請再接再厲！`;
+        nextBtn.style.display = 'none';
+        retryBtn.style.display = 'inline-block';
+      }
+    }
+
+    retryBtn.onclick = () => location.reload();
+    nextBtn.onclick = () => location.href = 'level2.html';
+  </script>
+</body>
+</html>
