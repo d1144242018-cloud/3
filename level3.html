@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學習證書｜SDGs 性別平權小達人</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: url('https://cdn.pixabay.com/photo/2016/11/29/05/08/sky-1867616_1280.jpg') center/cover no-repeat;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .certificate {
+    background: rgba(255, 255, 255, 0.95);
+    border: 8px solid #6a1b9a;
+    border-radius: 20px;
+    width: 80%;
+    max-width: 800px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 25px #4a148c;
+  }
+  h1 {
+    color: #6a1b9a;
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 28px;
+    color: #311b92;
+    margin: 15px 0;
+  }
+  .nameInput {
+    margin: 20px 0;
+    font-size: 22px;
+    padding: 10px;
+    border: 2px solid #6a1b9a;
+    border-radius: 10px;
+    text-align: center;
+    width: 60%;
+  }
+  .nameDisplay {
+    font-size: 30px;
+    font-weight: bold;
+    color: #4a148c;
+    border-bottom: 2px solid #4a148c;
+    display: inline-block;
+    min-width: 200px;
+    margin-bottom: 10px;
+  }
+  .downloadBtn {
+    background-color: #7b1fa2;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 30px;
+  }
+  .downloadBtn:hover {
+    background-color: #9c27b0;
+  }
+  .footer {
+    margin-top: 40px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  /* 列印樣式 */
+  @media print {
+    body {
+      background: white;
+    }
+    input, button {
+      display: none;
+    }
+    .certificate {
+      border: 4px solid #6a1b9a;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="certificate">
+  <h1>學習證書</h1>
+  <h2>恭喜您榮獲</h2>
+  <h2>🏅 SDGs 性別平權小達人 🏅</h2>
+
+  <p style="font-size:20px;">此證書頒發予：</p>
+  <div id="nameDisplay" class="nameDisplay">________</div>
+  <br>
+  <input type="text" id="nameInput" class="nameInput" placeholder="請輸入您的姓名">
+  <br>
+  <button class="downloadBtn" onclick="generateCertificate()">下載證書</button>
+
+  <div class="footer">
+    <p>指導單位：聯合國永續發展目標 SDGs 教育推廣</p>
+    <p>主題：性別平權教育推廣計畫</p>
+  </div>
+</div>
+
+<script>
+function generateCertificate() {
+  const name = document.getElementById("nameInput").value.trim();
+  if (name === "") {
+    alert("請先輸入您的姓名！");
+    return;
+  }
+  // 顯示姓名在證書上
+  document.getElementById("nameDisplay").textContent = name;
+  // 等待姓名顯示完成後再列印
+  setTimeout(() => window.print(), 300);
+}
+</script>
+
+</body>
+</html>
